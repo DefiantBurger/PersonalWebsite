@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>About You</title>
+</head>
+<body>
+<p>Operating System: {{ os }}</p>
+<p>Browser: {{ browser }}</p>
+<p>IP: {{ ip }}</p>
+{% if loc %}
+    <p>Location: {{ loc }}</p>
+{% endif %}
+</body>
+</html>

@@ -1,12 +1,6 @@
-import json
-import os
-
 from flask import Blueprint, render_template, send_from_directory, redirect, request, url_for
-
-if os.environ.get('FLASK_ENV') == 'development':
-	from dotenv import load_dotenv
-
-	load_dotenv()
+import httpagentparser
+import requests
 
 views = Blueprint('views', __name__)
 
@@ -29,4 +23,44 @@ def html_redirect(path):
 
 @views.route('/', methods=['GET'])
 def index():
-	return render_template("index.html", data=request.headers.get('User-Agent'))
+	return render_template("index.html")
+
+
+@views.route('/contact/', methods=['GET'])
+@views.route('/share/', methods=['GET'])
+@views.route('/scheduler/', methods=['GET'])
+@views.route('/me-rn/', methods=['GET'])
+@views.route('/chat/', methods=['GET'])
+@views.route('/insomnia/', methods=['GET'])
+@views.route('/nutrislice/', methods=['GET'])
+def unfinished_pages():
+	return render_template("unfinished.html")
+
+
+@views.route('/about-me/', methods=['GET'])
+def about_me():
+	return render_template("about-me.html")
+
+
+@views.route('/about-you/', methods=['GET'])
+def about_you():
+
+	user_agent = httpagentparser.detect(str(request.user_agent))
+	os_string = f"{user_agent['os']['name']} {user_agent['os']['version']}"
+	browser_string = f"{user_agent['browser']['name']} {user_agent['browser']['version']}"
+
+	ip_string = f"{request.remote_addr}"
+	if ip_string == "127.0.0.1":
+		ip_string = requests.get("https://api.ipify.org?format=json").json()['ip']
+
+	loc_data = requests.get(f"http://ip-api.com/json/{ip_string}").json()
+	if loc_data['status'] == "success":
+		loc_string = f"{loc_data['city']}, {loc_data['regionName']}, {loc_data['country']}"
+	else:
+		loc_string = None
+
+	return render_template("about-you.html",
+	                       os=os_string,
+	                       browser=browser_string,
+	                       ip=ip_string,
+	                       loc=loc_string)
