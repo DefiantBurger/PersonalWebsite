@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, send_from_directory, redirect, request, url_for
 import httpagentparser
 import requests
+import ipaddress
 
 views = Blueprint('views', __name__)
 
@@ -46,17 +47,26 @@ def about_me():
 def about_you():
 
 	user_agent = httpagentparser.detect(str(request.user_agent))
-	os_string = f"{user_agent['os']['name']} {user_agent['os']['version']}"
+
+	os_string = user_agent['os']['name']
+	try:
+		if user_agent['os']['name'].lower() == "windows":
+			os_string += f" {user_agent['os']['version']}"
+		elif user_agent['os']['name'].lower() == "linux":
+			os_string += f" {user_agent['dist']['name']}"
+	except KeyError:
+		pass
+
 	browser_string = f"{user_agent['browser']['name']} {user_agent['browser']['version']}"
 
 	ip_string = f"{request.remote_addr}"
-	if ip_string == "127.0.0.1":
+	if ipaddress.ip_address(ip_string).is_private:
 		ip_string = requests.get("https://api.ipify.org?format=json").json()['ip']
 
-	loc_data = requests.get(f"http://ip-api.com/json/{ip_string}").json()
-	if loc_data['status'] == "success":
-		loc_string = f"{loc_data['city']}, {loc_data['regionName']}, {loc_data['country']}"
-	else:
+	# loc_data = requests.get(f"http://ip-api.com/json/{ip_string}").json()
+	# if loc_data['status'] == "success":
+	# 	loc_string = f"{loc_data['city']}, {loc_data['regionName']}, {loc_data['country']}"
+	# else:
 		loc_string = None
 
 	return render_template("about-you.html",

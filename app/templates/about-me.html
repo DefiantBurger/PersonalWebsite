@@ -5,7 +5,16 @@
     <title>About Me</title>
 </head>
 <body>
-<p>My name is Joe</p>
-<p><a href="/about-you/">About You</a></p>
 </body>
 </html>
+
+{% extends 'base.html' %}
+
+{% block title %}
+    About Me
+{% endblock %}
+
+{% block body %}
+    <p>My name is Joe</p>
+    <p><a href="/about-you/">About You</a></p>
+{% endblock %}

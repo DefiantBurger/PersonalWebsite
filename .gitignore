@@ -1,2 +1,16 @@
-.venv
-.idea
+# General
+.env
+
+# Python
+__pycache__/
+.venv/
+.idea/
+
+# TypeScript
+node_modules/
+
+# Logs
+*.log
+
+# Compiled files
+*.tsbuildinfo

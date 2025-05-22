@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "outDir": "./app/assets/js",
+    "rootDir": "./ts-src",
+    "target": "es6",
+    "module": "es6",
+    "strict": true
+  },
+  "include": ["ts-src/**/*"]
+}
