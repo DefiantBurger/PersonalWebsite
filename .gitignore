@@ -1,5 +1,6 @@
 # General
 .env
+.env_json
 
 # Python
 __pycache__/

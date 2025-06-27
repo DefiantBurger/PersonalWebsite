@@ -1,0 +1,13 @@
+{
+	"semesters": {
+		"f24": [
+			"MATH 222",
+			"CHEM 103",
+			"COMP SCI 220"
+		],
+		"s25": [
+			"MATH 234",
+			"COMP SCI 300"
+		]
+	}
+}

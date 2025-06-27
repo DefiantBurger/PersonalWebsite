@@ -1,22 +1,44 @@
-{% extends 'base.html' %}
+{% extends 'base_templates/root.html' %}
+{% from "macros/gen_macros.html" import raised_content_block with context %}
 
 {% block title %}
-	About You
+    About You
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="/assets/css/about-you.css">
 {% endblock %}
 
 {% block body %}
-<p>Operating System: {{ os }}</p>
-<p>Browser: {{ browser }}</p>
-<p>IP: {{ ip }}</p>
-{% if loc %}
-    <p>Location: {{ loc }}</p>
-{% endif %}
-<label>
-<textarea>
-Try copying and pasting this text!
-</textarea>
-</label>
-<label>
-    <textarea placeholder="Paste here!"></textarea>
-</label>
+    {% call raised_content_block() %}
+        <h1 class="text-center">
+            About You
+        </h1>
+        <p class="text-center">
+            A demonstration of all the data websites can gather about you (along with some other interesting tricks)
+        </p>
+    {% endcall %}
+
+    {% call raised_content_block() %}
+        <div class="alert alert-primary d-inline-flex align-items-center w-fit-content">
+            <i class="fa-solid fa-info me-3"></i>
+            <div>None of your information gathered from this page is stored.</div>
+        </div>
+        <p>Operating System: {{ os }}</p>
+        <p>Browser: {{ browser }}</p>
+        <p>IP: {{ ip }}</p>
+        {% if loc %}
+            <p>Location: {{ loc }}</p>
+        {% endif %}
+        <div>
+            <label>
+                <textarea id="copy-box">Try copying and pasting this text!</textarea>
+            </label>
+            <label>
+                <textarea placeholder="Paste here!"></textarea>
+            </label>
+        </div>
+
+        <script src="/assets/js/about-you.js"></script>
+    {% endcall %}
 {% endblock %}

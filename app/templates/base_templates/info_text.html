@@ -1,0 +1,12 @@
+{% extends 'base_templates/root.html' %}
+
+{% block body %}
+    <div class="d-flex justify-content-center">
+        <h1 class="mt-5">{{ text }}</h1>
+    </div>
+    <div class="d-grid gap-2 col-6 mx-auto">
+        <a class="btn btn-outline-primary btn-lg m-3" role="button" href="{{ link_href }}">
+            {{ link_text }}
+        </a>
+    </div>
+{% endblock %}

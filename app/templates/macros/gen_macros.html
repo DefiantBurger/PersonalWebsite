@@ -1,0 +1,6 @@
+{% macro raised_content_block() %}
+{#<div class="alert alert-light shadow">#}
+<div class="card shadow p-3 my-3 border-light-subtle">
+    {{ caller() }}
+</div>
+{% endmacro %}

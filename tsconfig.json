@@ -4,7 +4,8 @@
     "rootDir": "./ts-src",
     "target": "es6",
     "module": "es6",
-    "strict": true
+    "strict": true,
+    "lib": ["es2023", "dom"]
   },
   "include": ["ts-src/**/*"]
 }

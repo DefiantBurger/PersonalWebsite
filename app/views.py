@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, send_from_directory, redirect, request, url_for
-import httpagentparser
-import requests
 import ipaddress
+
+import httpagentparser
+from flask import Blueprint, render_template, send_from_directory, redirect, request
+import requests
 
 views = Blueprint('views', __name__)
 
@@ -17,35 +18,30 @@ def sitemap_and_robots():
 	return send_from_directory("assets", request.path[1:])
 
 
-@views.route("/<path:path>.html/", methods=['GET'])
+@views.route("/<path:path>.html/")
 def html_redirect(path):
-	return redirect(f"/{path}")
+	return redirect(f"/{path}/")
 
 
-@views.route('/', methods=['GET'])
+@views.route('/')
 def index():
 	return render_template("index.html")
 
 
-@views.route('/contact/', methods=['GET'])
-@views.route('/share/', methods=['GET'])
-@views.route('/scheduler/', methods=['GET'])
-@views.route('/me-rn/', methods=['GET'])
-@views.route('/chat/', methods=['GET'])
-@views.route('/insomnia/', methods=['GET'])
-@views.route('/nutrislice/', methods=['GET'])
+@views.route('/contact/')
+@views.route('/me-rn/')
+@views.route('/chat/')
 def unfinished_pages():
 	return render_template("unfinished.html")
 
 
-@views.route('/about-me/', methods=['GET'])
+@views.route('/about-me/')
 def about_me():
 	return render_template("about-me.html")
 
 
-@views.route('/about-you/', methods=['GET'])
+@views.route('/about-you/')
 def about_you():
-
 	user_agent = httpagentparser.detect(str(request.user_agent))
 
 	os_string = user_agent['os']['name']
@@ -63,10 +59,10 @@ def about_you():
 	if ipaddress.ip_address(ip_string).is_private:
 		ip_string = requests.get("https://api.ipify.org?format=json").json()['ip']
 
-	# loc_data = requests.get(f"http://ip-api.com/json/{ip_string}").json()
-	# if loc_data['status'] == "success":
-	# 	loc_string = f"{loc_data['city']}, {loc_data['regionName']}, {loc_data['country']}"
-	# else:
+	loc_data = requests.get(f"http://ip-api.com/json/{ip_string}").json()
+	if loc_data['status'] == "success":
+		loc_string = f"{loc_data['city']}, {loc_data['regionName']}, {loc_data['country']}"
+	else:
 		loc_string = None
 
 	return render_template("about-you.html",
@@ -74,3 +70,4 @@ def about_you():
 	                       browser=browser_string,
 	                       ip=ip_string,
 	                       loc=loc_string)
+

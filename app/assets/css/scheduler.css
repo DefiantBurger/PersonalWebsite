@@ -1,0 +1,20 @@
+#course-container,
+#line-container {
+    position: relative;
+}
+
+#course-container > div {
+    position: absolute;
+    border-style: solid;
+    border-width: 1px;
+    background-color: var(--bulma-light); /* TODO: Fix all the bulma stuff */
+    color: var(--bulma-dark);
+    cursor: grab;
+    text-align: center;
+    align-content: center;
+    user-select: none;
+}
+
+#line-container > div {;
+    pointer-events: none;
+}

@@ -1,0 +1,31 @@
+body {
+    font-family: "Funnel Display", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+
+    margin-top: 6em;
+}
+
+.nav-item {
+    border-radius: var(--bs-border-radius);
+    transition: box-shadow 0.15s ease-out, border 0.15s ease-out;
+    border: 1px solid rgb(0, 0, 0, 0);
+}
+
+.nav-item:hover {
+    box-shadow: rgb(0, 0, 0, 0.1) 0 0 0.2em 0.15em;
+    border: 1px solid lightgray;
+}
+
+.w-fit-content {
+    width: fit-content;
+}
+
+.dropdown-menu {
+    margin-top: 0.1em;
+}
+
+.dropdown:hover > .dropdown-menu {
+    display: block;
+}

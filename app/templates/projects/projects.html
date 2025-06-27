@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Projects</title>
-</head>
-<body>
+{% extends 'base_templates/root.html' %}
+
+{% block title %}Projects{% endblock %}
+
+{% block body %}
 <ul>
     <li>
         <a href="/projects/mlmp/">Main Line Math Project</a>
@@ -19,5 +17,4 @@
         etc.
     </li>
 </ul>
-</body>
-</html>
+{% endblock %}
