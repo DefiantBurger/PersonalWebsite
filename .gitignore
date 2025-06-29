@@ -15,3 +15,13 @@ node_modules/
 
 # Compiled files
 *.tsbuildinfo
+
+# Terraform state
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+
+# Terraform working directory
+terraform/.terraform
+
+# Terraform lock file
+terraform/.terraform.lock.hcl
