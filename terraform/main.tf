@@ -76,20 +76,6 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 echo "[5/6] Creating systemd service for Flask app..."
-# cat <<EOF | tee /etc/systemd/system/flaskapp.service
-# [Unit]
-# Description=Flask Application
-# After=network.target
-#
-# [Service]
-# User=root
-# WorkingDirectory=${var.app_path}
-# ExecStart=${var.app_path}/venv/bin/python3 main.py
-# Restart=always
-#
-# [Install]
-# WantedBy=multi-user.target
-# EOF
 echo "${data.template_file.flaskapp_service.rendered}" | tee /etc/systemd/system/flaskapp.service
 
 echo "Enabling and starting flaskapp.service..."
@@ -103,29 +89,6 @@ mkdir ${var.app_path}/certs
 echo "${data.google_secret_manager_secret_version.cloudflare-origin-certificate.secret_data}" | sudo tee ${var.app_path}/certs/cloudflare.crt > /dev/null
 echo "${data.google_secret_manager_secret_version.cloudflare-private-key.secret_data}" | sudo tee ${var.app_path}/certs/cloudflare.key > /dev/null
 
-# cat <<EOF | tee /etc/nginx/sites-available/default
-# server {
-# 	listen 443 ssl;
-# 	server_name ${var.domain} *.${var.domain};
-#
-# 	ssl_certificate ${var.app_path}/certs/cloudflare.crt;
-# 	ssl_certificate_key ${var.app_path}/certs/cloudflare.key;
-#
-# 	location / {
-# 		proxy_pass http://localhost:5000;
-# 		proxy_set_header Host \$host;
-# 		proxy_set_header X-Real-IP \$remote_addr;
-# 		proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-# 		proxy_set_header X-Forwarded-Proto \$scheme;
-# 	}
-# }
-#
-# server {
-# 	listen 80;
-# 	server_name ${var.domain} *.${var.domain};
-# 	return 301 https://\$host\$request_uri;
-# }
-# EOF
 echo "${data.template_file.nginx_conf.rendered}" | tee /etc/nginx/sites-available/default
 
 systemctl restart nginx
@@ -168,7 +131,7 @@ resource "google_compute_firewall" "flask" {
 }
 
 output "Web-server-URL" {
-  description = "The IP for the website."
+  description = "The IP for the website"
   value       = google_compute_instance.default.network_interface[0].access_config[0].nat_ip
 }
 

@@ -12,6 +12,7 @@ app = create_app()
 if __name__ == '__main__':
 	# TODO:
 	#  consider https://stackoverflow.com/a/12269934 (nginx asset serving & rate limiting)
+	#  try to add a message while web server is down
 
 	load_dotenv()
 	serve(app, host='0.0.0.0', port=5000)
