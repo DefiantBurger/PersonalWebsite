@@ -1,11 +1,11 @@
 provider "google" {
-  project = "personal-website-453120"
-  region  = "us-central1"
+  project = var.project_id
+  region  = var.project_region
 }
 
 provider "google-beta" {
-  project = "personal-website-453120"
-  region  = "us-central1"
+  project = var.project_id
+  region  = var.project_region
 }
 
 resource "google_compute_network" "vpc_network" {
@@ -17,24 +17,34 @@ resource "google_compute_network" "vpc_network" {
 resource "google_compute_subnetwork" "default" {
   name          = "my-custom-subnet"
   ip_cidr_range = "10.0.1.0/24"
-  region        = "us-central1"
+  region        = var.project_region
   network       = google_compute_network.vpc_network.id
 }
 
 
-data "template_file" "nginx_conf" {
-  template = file("${path.module}/nginx.tftpl")
-  vars = {
+# data "template_file" "nginx_conf" {
+#   template = file("${path.module}/nginx.tftpl")
+#   vars = {
+#     domain   = var.domain
+#     app_path = var.app_path
+#   }
+# }
+
+# data "template_file" "flaskapp_service" {
+#   template = file("${path.module}/flaskapp.service.tftpl")
+#   vars = {
+#     app_path = var.app_path
+#   }
+# }
+
+locals {
+  nginx_conf = templatefile("${path.module}/nginx.tftpl", {
     domain   = var.domain
     app_path = var.app_path
-  }
-}
-
-data "template_file" "flaskapp_service" {
-  template = file("${path.module}/flaskapp.service.tftpl")
-  vars = {
+  })
+  flaskapp_service = templatefile("${path.module}/flaskapp.service.tftpl", {
     app_path = var.app_path
-  }
+  })
 }
 
 
@@ -42,7 +52,7 @@ data "template_file" "flaskapp_service" {
 resource "google_compute_instance" "default" {
   name         = "flask-vm"
   machine_type = "e2-micro"
-  zone         = "us-central1-a"
+  zone         = var.project_zone
   tags = ["ssh"]
 
   boot_disk {
@@ -76,7 +86,7 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 echo "[5/6] Creating systemd service for Flask app..."
-echo "${data.template_file.flaskapp_service.rendered}" | tee /etc/systemd/system/flaskapp.service
+echo "${local.flaskapp_service}" | tee /etc/systemd/system/flaskapp.service
 
 echo "Enabling and starting flaskapp.service..."
 systemctl daemon-reexec
@@ -89,9 +99,10 @@ mkdir ${var.app_path}/certs
 echo "${data.google_secret_manager_secret_version.cloudflare-origin-certificate.secret_data}" | sudo tee ${var.app_path}/certs/cloudflare.crt > /dev/null
 echo "${data.google_secret_manager_secret_version.cloudflare-private-key.secret_data}" | sudo tee ${var.app_path}/certs/cloudflare.key > /dev/null
 
-echo "${data.template_file.nginx_conf.rendered}" | tee /etc/nginx/sites-available/default
+echo "${local.nginx_conf}" | tee /etc/nginx/sites-available/default
 
 systemctl restart nginx
+
 
 echo "===== Startup Script Complete ====="
 EOT

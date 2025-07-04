@@ -9,3 +9,21 @@ variable "app_path" {
   type        = string
   default     = "/opt/flaskapp"
 }
+
+variable "project_id" {
+  description = "GCP project ID"
+  type = string
+  default = "personal-website-453120"
+}
+
+variable "project_region" {
+  description = "GCP region of project"
+  type = string
+  default = "us-central1"
+}
+
+variable "project_zone" {
+  description = "GCP zone of project"
+  type = string
+  default = "us-central1-a"
+}
