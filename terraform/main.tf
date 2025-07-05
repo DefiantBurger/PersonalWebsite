@@ -117,16 +117,19 @@ EOT
   }
 }
 
-resource "google_compute_firewall" "ssh" {
-  name = "allow-ssh"
-  allow {
-    ports = ["22"]
-    protocol = "tcp"
-  }
-  direction = "INGRESS"
+# Allows SSH access via GCP website
+resource "google_compute_firewall" "allow_iap_ssh" {
+  name      = "allow-iap-ssh"
   network   = google_compute_network.vpc_network.id
+  direction = "INGRESS"
   priority  = 1000
-  source_ranges = ["0.0.0.0/0"]
+
+  allow {
+    protocol = "tcp"
+    ports = ["22"]
+  }
+
+  source_ranges = ["35.235.240.0/20"]
   target_tags = ["ssh"]
 }
 
@@ -138,7 +141,24 @@ resource "google_compute_firewall" "flask" {
     protocol = "tcp"
     ports = ["80", "443"]
   }
-  source_ranges = ["0.0.0.0/0"]
+  source_ranges = [
+    # Only allows access from Cloudflare's IPs
+    "173.245.48.0/20",
+    "103.21.244.0/22",
+    "103.22.200.0/22",
+    "103.31.4.0/22",
+    "141.101.64.0/18",
+    "108.162.192.0/18",
+    "190.93.240.0/20",
+    "188.114.96.0/20",
+    "197.234.240.0/22",
+    "198.41.128.0/17",
+    "162.158.0.0/15",
+    "104.16.0.0/13",
+    "104.24.0.0/14",
+    "172.64.0.0/13",
+    "131.0.72.0/22"
+  ]
 }
 
 output "Web-server-URL" {
