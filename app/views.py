@@ -42,6 +42,10 @@ def about_me():
 
 @views.route('/about-you/')
 def about_you():
+	# TODO: Fix IP being wrong
+
+	print(request.headers)
+
 	user_agent = httpagentparser.detect(str(request.user_agent))
 
 	os_string = user_agent['os']['name']
@@ -59,15 +63,16 @@ def about_you():
 	if ipaddress.ip_address(ip_string).is_private:
 		ip_string = requests.get("https://api.ipify.org?format=json").json()['ip']
 
-	loc_data = requests.get(f"http://ip-api.com/json/{ip_string}").json()
-	if loc_data['status'] == "success":
-		loc_string = f"{loc_data['city']}, {loc_data['regionName']}, {loc_data['country']}"
+	loc_data = requests.get(f"https://free.freeipapi.com/api/json/{ip_string}").json()
+	print(loc_data)
+	if loc_data['ipVersion'] is not None:
+		loc_string = f"{loc_data['cityName']}, {loc_data['regionName']}, {loc_data['countryName']}"
 	else:
 		loc_string = None
 
 	return render_template("about-you.html",
-	                       os=os_string,
-	                       browser=browser_string,
-	                       ip=ip_string,
-	                       loc=loc_string)
+						   os=os_string,
+						   browser=browser_string,
+						   ip=ip_string,
+						   loc=loc_string)
 
