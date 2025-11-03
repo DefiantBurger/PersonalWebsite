@@ -43,7 +43,8 @@ locals {
     app_path = var.app_path
   })
   flaskapp_service = templatefile("${path.module}/flaskapp.service.tftpl", {
-    app_path = var.app_path
+    app_path     = var.app_path
+    flask_secret = data.google_secret_manager_secret_version.flask-secret.secret_data
   })
 }
 
@@ -61,51 +62,51 @@ resource "google_compute_instance" "default" {
     }
   }
 
-  metadata_startup_script = <<EOT
-#!/bin/bash
+  metadata_startup_script = <<-EOT
+    #!/bin/bash
 
-# Redirect all output to serial port and a log file for visibility
-exec > >(tee /dev/console | tee -a /var/log/startup-script.log) 2>&1
+    # Redirect all output to serial port and a log file for visibility
+    exec > >(tee /dev/console | tee -a /var/log/startup-script.log) 2>&1
 
-echo "===== Startup Script Begin ====="
+    echo "===== Startup Script Begin ====="
 
-echo "[1/6] Updating packages..."
-sudo apt-get update
+    echo "[1/6] Updating packages..."
+    sudo apt-get update
 
-echo "[2/6] Installing dependencies..."
-sudo apt-get install -yq build-essential python3-pip python3-venv rsync git tmux nginx
+    echo "[2/6] Installing dependencies..."
+    sudo apt-get install -yq build-essential python3-pip python3-venv rsync git tmux nginx
 
-echo "[3/6] Cloning Flask app..."
-git clone https://github.com/DefiantBurger/PersonalWebsite ${var.app_path}
-cd ${var.app_path}
+    echo "[3/6] Cloning Flask app..."
+    git clone https://github.com/DefiantBurger/PersonalWebsite ${var.app_path}
+    cd ${var.app_path}
 
-echo "[4/6] Setting up virtual environment and installing requirements..."
-python3 -m venv venv
-source venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+    echo "[4/6] Setting up virtual environment and installing requirements..."
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install --upgrade pip
+    pip install -r requirements.txt
 
-echo "[5/6] Creating systemd service for Flask app..."
-echo "${local.flaskapp_service}" | tee /etc/systemd/system/flaskapp.service
+    echo "[5/6] Creating systemd service for Flask app..."
+    echo "${local.flaskapp_service}" | tee /etc/systemd/system/flaskapp.service
 
-echo "Enabling and starting flaskapp.service..."
-systemctl daemon-reexec
-systemctl daemon-reload
-systemctl enable flaskapp
-systemctl start flaskapp
+    echo "Enabling and starting flaskapp.service..."
+    systemctl daemon-reexec
+    systemctl daemon-reload
+    systemctl enable flaskapp
+    systemctl start flaskapp
 
-echo "[6/6] Setting up Nginx reverse proxy..."
-mkdir ${var.app_path}/certs
-echo "${data.google_secret_manager_secret_version.cloudflare-origin-certificate.secret_data}" | sudo tee ${var.app_path}/certs/cloudflare.crt > /dev/null
-echo "${data.google_secret_manager_secret_version.cloudflare-private-key.secret_data}" | sudo tee ${var.app_path}/certs/cloudflare.key > /dev/null
+    echo "[6/6] Setting up Nginx reverse proxy..."
+    mkdir ${var.app_path}/certs
+    echo "${data.google_secret_manager_secret_version.cloudflare-origin-certificate.secret_data}" | sudo tee ${var.app_path}/certs/cloudflare.crt > /dev/null
+    echo "${data.google_secret_manager_secret_version.cloudflare-private-key.secret_data}" | sudo tee ${var.app_path}/certs/cloudflare.key > /dev/null
 
-echo "${local.nginx_conf}" | tee /etc/nginx/sites-available/default
+    echo "${local.nginx_conf}" | tee /etc/nginx/sites-available/default
 
-systemctl restart nginx
+    systemctl restart nginx
 
 
-echo "===== Startup Script Complete ====="
-EOT
+    echo "===== Startup Script Complete ====="
+  EOT
 
 
   network_interface {

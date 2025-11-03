@@ -5,8 +5,12 @@ After=network.target
 [Service]
 User=root
 WorkingDirectory=${app_path}
+Environment="FLASK_SECRET=${flask_secret}"
 ExecStart=${app_path}/venv/bin/python3 main.py
 Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=multi-user.target

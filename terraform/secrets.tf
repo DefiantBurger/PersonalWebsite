@@ -21,3 +21,9 @@ data "google_secret_manager_secret_version" "cloudflare-zone-id" {
 
   secret = "cloudflare-zone-id"
 }
+
+data "google_secret_manager_secret_version" "flask-secret" {
+  provider = google-beta
+
+  secret = "flask-secret"
+}
