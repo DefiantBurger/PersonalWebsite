@@ -9,4 +9,8 @@ resource "cloudflare_record" "website_a_record" {
   type    = "A"
   proxied = true
   comment = "Redirect to flask app"
+
+  lifecycle {
+    create_before_destroy = false
+  }
 }

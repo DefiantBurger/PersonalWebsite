@@ -25,3 +25,4 @@ terraform/.terraform
 
 # Terraform lock file
 terraform/.terraform.lock.hcl
+terraform/.terraform.tfstate.lock.info
