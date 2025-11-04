@@ -1,8 +1,8 @@
 import ipaddress
 
 import httpagentparser
-from flask import Blueprint, render_template, send_from_directory, redirect, request
 import requests
+from flask import Blueprint, render_template, send_from_directory, redirect, request
 
 views = Blueprint('views', __name__)
 
@@ -42,10 +42,6 @@ def about_me():
 
 @views.route('/about-you/')
 def about_you():
-	# TODO: Fix IP being wrong
-
-	print(request.headers)
-
 	user_agent = httpagentparser.detect(str(request.user_agent))
 
 	os_string = user_agent['os']['name']
@@ -71,8 +67,7 @@ def about_you():
 		loc_string = None
 
 	return render_template("about-you.html",
-						   os=os_string,
-						   browser=browser_string,
-						   ip=ip_string,
-						   loc=loc_string)
-
+	                       os=os_string,
+	                       browser=browser_string,
+	                       ip=ip_string,
+	                       loc=loc_string)

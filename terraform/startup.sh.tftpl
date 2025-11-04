@@ -4,7 +4,7 @@ exec > >(tee /dev/console | tee -a /var/log/startup-script.log) 2>&1
 
 echo "===== Startup Script Begin ====="
 
-echo "[0/6] Pre-setup Setup"
+echo "[0/6] Pre-Setup"
 export DEBIAN_FRONTEND=noninteractive
 apt-get remove -y man-db
 apt-get autoremove -y
@@ -27,7 +27,7 @@ pip install -r requirements.txt
 
 echo "[5/6] Creating systemd service for Flask app..."
 #echo "${flaskapp_service}" | tee /etc/systemd/system/flaskapp.service
-printf "%s" "${flaskapp_service}" > /etc/systemd/system/flaskapp.service
+printf "%s" "${flaskapp_service}" | base64 --decode > /etc/systemd/system/flaskapp.service
 
 echo "Enabling and starting flaskapp.service..."
 systemctl daemon-reload
@@ -36,12 +36,10 @@ systemctl start flaskapp
 
 echo "[6/6] Setting up Nginx reverse proxy..."
 mkdir ${app_path}/certs
-#echo "${cloudflare_cert}" | sudo tee ${app_path}/certs/cloudflare.crt > /dev/null
-#echo "${cloudflare_key}" | sudo tee ${app_path}/certs/cloudflare.key > /dev/null
 printf "%s" "${cloudflare_cert}" | base64 --decode > ${app_path}/certs/cloudflare.crt 2>/dev/null
-printf "%s" "${cloudflare_key}"  | base64 --decode > ${app_path}/certs/cloudflare.key 2>/dev/null
+printf "%s" "${cloudflare_key}" | base64 --decode > ${app_path}/certs/cloudflare.key 2>/dev/null
 
-printf "%s" "${nginx_conf}" > /etc/nginx/sites-available/default
+printf "%s" "${nginx_conf}" | base64 --decode > /etc/nginx/sites-available/default
 
 systemctl restart nginx
 

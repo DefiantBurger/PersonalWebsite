@@ -52,7 +52,7 @@ resource "google_compute_instance" "default" {
 
   metadata_startup_script = templatefile("${path.module}/startup.sh.tftpl", {
     app_path         = var.app_path
-    flaskapp_service = local.flaskapp_service
+    flaskapp_service = base64encode(local.flaskapp_service)
     cloudflare_cert  = base64encode(data.google_secret_manager_secret_version.cloudflare-origin-certificate.secret_data)
     cloudflare_key   = base64encode(data.google_secret_manager_secret_version.cloudflare-private-key.secret_data)
     nginx_conf     = base64encode(local.nginx_conf)
