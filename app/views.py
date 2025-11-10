@@ -2,7 +2,7 @@ import ipaddress
 
 import httpagentparser
 import requests
-from flask import Blueprint, render_template, send_from_directory, redirect, request
+from flask import Blueprint, render_template, send_from_directory, redirect, request, current_app
 
 views = Blueprint('views', __name__)
 
@@ -42,6 +42,8 @@ def about_me():
 
 @views.route('/about-you/')
 def about_you():
+	current_app.logger.debug(request.headers)
+
 	user_agent = httpagentparser.detect(str(request.user_agent))
 
 	os_string = user_agent['os']['name']
@@ -56,8 +58,8 @@ def about_you():
 	browser_string = f"{user_agent['browser']['name']} {user_agent['browser']['version']}"
 
 	ip_string = f"{request.remote_addr}"
-	if ipaddress.ip_address(ip_string).is_private:
-		ip_string = requests.get("https://api.ipify.org?format=json").json()['ip']
+	# if ipaddress.ip_address(ip_string).is_private:
+	# 	ip_string = requests.get("https://api.ipify.org?format=json").json()['ip']
 
 	loc_data = requests.get(f"https://free.freeipapi.com/api/json/{ip_string}").json()
 	print(loc_data)

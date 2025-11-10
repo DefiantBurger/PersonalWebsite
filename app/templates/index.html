@@ -4,179 +4,161 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Hello World! This is my website!</h1>
-    <h3>
-        <a href="/projects/">Projects</a>
-    </h3>
-    <p>Featured projects:</p>
-    <ul>
-        <li>
-            <a href="/projects/mlmp/">Main Line Math Project</a>
-        </li>
-        <li>
-            <a href="/projects/jball/">J-Ball Basketball</a>
-        </li>
-        <li>
-            <a href="/projects/latin/">Latin Translator</a>
-        </li>
-        <li>
-            etc.
-        </li>
-    </ul>
-    <h3><a href="/about-me/">About Me</a></h3>
-    <h3><a href="/contact/">Contact Me</a></h3>
-    <h3><a href="/share/">File & Text Sharing</a></h3>
-    <h3><a href="/scheduler/">Class Scheduling Utility</a></h3>
-    <h3><a href="/me-rn/">me rn (spotify, etc.)</a></h3>
-    <h3><a href="/chat/"></a></h3>
-    <h3><a href="/insomnia/">Insomnia Cookies Deals</a></h3>
-    <h3><a href="/nutrislice/">Nutrislice Tracker</a></h3>
-    <p>
+    <div class="container py-4">
+        <!-- Hero Section -->
+        <header class="text-center py-5 mb-5">
+            <h1 class="display-3 mb-3">Welcome to JosephCicalese.com</h1>
+            <p class="lead text-muted mx-auto">
+                Explore my projects, try out my tools, and check out my other creative work
+            </p>
+        </header>
 
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas laoreet nibh sit amet aliquet tristique. Ut
-        eget lacus mi. Etiam diam quam, tincidunt a eros eu, sollicitudin pellentesque augue. Etiam rutrum bibendum sem
-        vitae consectetur. Quisque mi sapien, venenatis posuere luctus id, luctus eu tellus. Ut velit lorem, fermentum
-        id placerat eu, efficitur et erat. Vivamus sit amet mi lacus. Integer sed turpis sapien. Aenean ornare at tortor
-        ac imperdiet. In elit ante, dignissim a nibh eget, finibus laoreet velit. Vestibulum efficitur, tortor in
-        iaculis tincidunt, nulla ex semper est, quis aliquet tellus urna a diam. Integer dignissim purus vel nibh
-        hendrerit, luctus dapibus metus imperdiet. Donec mollis ex arcu, sodales aliquet ipsum eleifend rutrum.
+{#        <section>#}
+{#            <div class="row text-center">#}
+{#                <div class="col">#}
+{#                    <div class="card h-100 shadow-sm"></div>#}
+{#                </div>#}
+{#                <div class="col">#}
+{#                    Column 2#}
+{#                </div>#}
+{#            </div>#}
+{#        </section>#}
 
-        Mauris sed porttitor tortor, non dapibus mauris. Maecenas mattis a felis quis fermentum. Nulla facilisi.
-        Vestibulum id mauris tincidunt tortor ornare ullamcorper non ut sem. Vestibulum vehicula, urna a commodo
-        accumsan, tortor mi eleifend dolor, vitae ultricies quam est ut orci. Suspendisse vel elit tincidunt, lobortis
-        libero eget, rhoncus elit. Aliquam in urna a nunc efficitur vestibulum non eu ipsum. Donec id neque laoreet,
-        viverra quam commodo, tristique eros. Etiam porta risus nisl. Pellentesque ante odio, pretium at augue a, tempor
-        consectetur felis. Cras libero nulla, maximus in pharetra sit amet, tristique sed massa. Praesent aliquam
-        facilisis nulla, in dictum lorem dictum sed. Praesent scelerisque accumsan rutrum. Aliquam in tellus lacinia,
-        malesuada ante vitae, dictum magna.
+        <!-- Featured Projects Section -->
+        <section class="mb-5">
+            <h2 class="display-6 mb-4 pb-2 border-bottom border-dark border-3">
+                Featured Projects
+            </h2>
+            <div class="row g-4 mb-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h3 class="card-title h5">
+                                <a href="/projects/mlmp/" class="text-decoration-none text-primary">Main Line Math
+                                    Project</a>
+                            </h3>
+                            <p class="card-text text-secondary">
+                                Main Line Math Project is a free community-based organization that is dedicated to
+                                providing students with a safe, helpful, and enjoyable environment to learn and grow.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h3 class="card-title h5">
+                                <a href="/projects/jball/" class="text-decoration-none text-primary">J-Ball
+                                    Basketball</a>
+                            </h3>
+                            <p class="card-text text-secondary">
+                                J-Ball Basketball is a non-profit Jewish High School Basketball League connecting over
+                                110 young men from across the Greater Philadelphia Area, combining their love for
+                                basketball with their Jewish identity.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h3 class="card-title h5">
+                                <a href="/projects/latin/" class="text-decoration-none text-primary">Latin
+                                    Translator</a>
+                            </h3>
+                            <p class="card-text text-secondary">
+                                A Latin translation tool for converting Latin text to English based off Whitaker's Words
+                                with support for by-word sentence translation.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <a href="/projects/" class="fs-5 text-decoration-none fw-bold">
+                    View All Projects →
+                </a>
+            </div>
+        </section>
 
-        Etiam nec nibh a mi eleifend mollis vel placerat libero. Cras felis nulla, porta dignissim mi sit amet, sodales
-        vehicula nunc. Nullam eu est nisi. Praesent mattis libero nulla, nec interdum risus accumsan id. Maecenas vel
-        sem convallis, pretium lacus ut, ornare nulla. Mauris nec ipsum eu velit ultricies molestie. Vivamus id varius
-        sem. Donec sed lacus tincidunt, finibus erat quis, mollis lacus. Nullam at odio elementum, blandit diam quis,
-        commodo dolor.
+        <!-- Utilities Section -->
+        <section class="mb-5">
+            <h2 class="display-6 mb-4 pb-2 border-bottom border-dark border-3">
+                Tools & Utilities
+            </h2>
+            <div class="row g-3">
+                <div class="col-md-6 col-lg-3">
+                    <div class="p-3 bg-light border-start border-primary border-4 h-100">
+                        <h3 class="h5 mb-2">
+                            <a href="/utils/scheduler/" class="text-decoration-none text-dark">📅 Class Scheduler</a>
+                        </h3>
+                        <p class="text-muted small mb-0">Plan and organize your class schedule efficiently</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="p-3 bg-light border-start border-primary border-4 h-100">
+                        <h3 class="h5 mb-2">
+                            <a href="/utils/share/" class="text-decoration-none text-dark">📤 File Sharing</a>
+                        </h3>
+                        <p class="text-muted small mb-0">Quick and easy file and text sharing</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="p-3 bg-light border-start border-primary border-4 h-100">
+                        <h3 class="h5 mb-2">
+                            <a href="/utils/insomnia/" class="text-decoration-none text-dark">🍪 Insomnia Deals</a>
+                        </h3>
+                        <p class="text-muted small mb-0">Track the latest Insomnia Cookies deals</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="p-3 bg-light border-start border-primary border-4 h-100">
+                        <h3 class="h5 mb-2">
+                            <a href="/utils/nutrislice/" class="text-decoration-none text-dark">🍽️ Nutrislice
+                                Tracker</a>
+                        </h3>
+                        <p class="text-muted small mb-0">Monitor nutrition and meal information</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        Vivamus suscipit non eros ac pharetra. Vivamus in ex sed leo ultrices iaculis. In ac metus dignissim,
-        pellentesque lacus ut, fermentum ante. Donec vestibulum libero egestas euismod accumsan. Vivamus tristique
-        ornare massa, id sodales ipsum commodo eu. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed eu
-        nulla turpis. Nunc vel tortor quis augue rhoncus interdum suscipit vel lorem. Maecenas ultricies luctus orci, in
-        hendrerit augue suscipit et. Vivamus euismod augue nec est convallis, vitae convallis est hendrerit. Suspendisse
-        sed accumsan dolor. Maecenas facilisis, lacus sit amet sodales finibus, erat tortor finibus justo, nec fringilla
-        lectus tortor et sapien. Duis porttitor elit turpis. Aenean bibendum nulla nec velit dapibus bibendum. Phasellus
-        suscipit lobortis iaculis.
+        <!-- About & Contact Section -->
+        <section class="mb-5">
+            <h2 class="display-6 mb-4 pb-2 border-bottom border-dark border-3">
+                Get to Know Me
+            </h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="text-center p-4 bg-light rounded">
+                        <h3 class="h5 mb-3">
+                            <a href="/about-me/" class="text-decoration-none text-primary">About Me</a>
+                        </h3>
+                        <p class="text-muted mb-0">Learn about my background and interests</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-4 bg-light rounded">
+                        <h3 class="h5 mb-3">
+                            <a href="/contact/" class="text-decoration-none text-primary">Contact Me</a>
+                        </h3>
+                        <p class="text-muted mb-0">Get in touch for collaborations</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-4 bg-light rounded">
+                        <h3 class="h5 mb-3">
+                            <a href="/me-rn/" class="text-decoration-none text-primary">Me Right Now</a>
+                        </h3>
+                        <p class="text-muted mb-0">See what I'm currently listening to</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        Curabitur ac dictum urna, vel egestas est. Cras quis faucibus ligula. Curabitur tempus imperdiet urna vel
-        sodales. Sed nec vestibulum tellus. Donec aliquam dui nec ante tempor varius. Nullam mattis in dui a porta.
-        Nulla gravida consequat urna eget rhoncus. Duis ligula libero, tempus non viverra eu, elementum a erat. Vivamus
-        non libero ac velit molestie molestie sed quis lorem. Nulla lobortis, purus ut semper vestibulum, velit sem
-        consectetur eros, nec venenatis leo est vitae ex. Aliquam varius faucibus dolor, quis condimentum libero. Sed in
-        nulla nec lacus placerat tempus a vitae lorem. Proin vehicula a turpis eu dignissim. Duis luctus bibendum ante
-        sed laoreet. Nullam lobortis gravida tellus vel tempus. Duis iaculis consequat tellus a dignissim.
-
-        Fusce egestas urna quis libero feugiat sollicitudin. Suspendisse auctor ex ac enim viverra consequat. Vestibulum
-        vel ligula vel libero mattis commodo eu et nibh. Sed eget quam vitae augue ultrices eleifend ut sit amet leo.
-        Proin id mauris eu orci vehicula lobortis. Donec mattis augue at feugiat lacinia. Curabitur sit amet pretium
-        justo. Quisque iaculis velit quis sem consectetur ultricies. In neque urna, ullamcorper vitae mollis sit amet,
-        ullamcorper in eros. Nunc quis ante eget mauris iaculis pretium a nec augue. Aliquam eget faucibus nibh.
-        Vestibulum convallis est quis dapibus dignissim. Vivamus libero turpis, sollicitudin eu efficitur sed, feugiat
-        nec lectus. Quisque dapibus lectus sed orci vestibulum malesuada. Quisque sit amet tempus nisl, lobortis
-        fermentum enim. Cras urna sem, aliquet eget tincidunt et, maximus at nisi.
-
-        In sodales malesuada arcu id maximus. Nullam rhoncus, massa fringilla vestibulum placerat, velit enim vestibulum
-        velit, id ornare velit velit eget tellus. Sed nec ante convallis, lobortis ex non, faucibus neque. Maecenas
-        ullamcorper metus sed lorem ultrices, in rutrum velit feugiat. Curabitur id porttitor purus. Suspendisse
-        ullamcorper lorem a consequat varius. Donec et mollis ipsum. Donec accumsan eu lectus quis varius. Cras sapien
-        odio, condimentum vitae mauris non, vulputate convallis quam. Ut at cursus velit. Quisque pellentesque lacus ut
-        nibh egestas, eget molestie libero tristique. Pellentesque feugiat odio a mi cursus rutrum.
-
-        Phasellus id dolor accumsan, maximus nunc a, finibus diam. Etiam quam turpis, mollis eu sem quis, bibendum
-        sodales magna. Morbi molestie fringilla finibus. Nullam sapien lorem, gravida in rhoncus non, fermentum vel
-        orci. Aliquam ut sagittis lorem. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
-        inceptos himenaeos. Phasellus vel ex ut orci placerat aliquet vel ut magna. Donec dictum eu risus a porttitor.
-        Morbi placerat ex vitae tristique consectetur. Integer dignissim nulla sit amet nisi iaculis, vestibulum mattis
-        nunc tincidunt. Suspendisse potenti. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere
-        cubilia curae; Donec maximus lacus vel est tincidunt semper. Nunc placerat maximus dignissim. Ut varius, magna
-        vitae tincidunt feugiat, diam nisl sagittis velit, in vulputate risus nibh non nisi. Proin dapibus malesuada ex,
-        eu pellentesque magna malesuada non.
-
-        Curabitur pulvinar dolor in ligula lobortis, at sagittis diam laoreet. Maecenas bibendum lectus non turpis
-        tincidunt vehicula. Fusce semper ipsum non justo malesuada auctor. In eros dui, vestibulum eu ornare eget,
-        efficitur eu tellus. In sed accumsan orci. Nulla faucibus aliquet convallis. Ut et suscipit nisi, sit amet
-        vestibulum tortor. Suspendisse mi purus, consequat sed lectus nec, posuere sodales magna. Aliquam turpis tortor,
-        viverra id feugiat eu, luctus pretium mauris. Aenean non est vitae augue condimentum iaculis non vitae turpis.
-        Integer in metus vel nulla convallis pellentesque quis in dolor. Nulla vel mauris nec velit ultrices faucibus ut
-        dignissim ex. Suspendisse a purus eu lacus pretium consectetur. Donec vitae diam nulla.
-
-        Nunc vel risus tincidunt, cursus sem sit amet, feugiat sem. Quisque tincidunt eu turpis ut interdum. Maecenas
-        semper orci at faucibus scelerisque. Vivamus eget porta arcu, vel consequat nibh. Aenean sollicitudin varius
-        nunc sed tempor. Phasellus ac sapien gravida nisl finibus consectetur non quis odio. Ut sollicitudin libero ut
-        eleifend ullamcorper. Aliquam dignissim mauris ultricies eros porttitor tristique et eget enim. Maecenas turpis
-        leo, blandit vitae ligula ac, ullamcorper placerat metus. Aliquam aliquet pellentesque lorem, eu auctor nulla
-        semper ac. Nam sollicitudin, tortor at commodo dignissim, lacus odio laoreet eros, ut aliquam diam ante ut nisl.
-        Praesent in quam ac ligula ornare blandit ac eget risus. In eget sem vitae lorem egestas scelerisque.
-
-        Aliquam nec sapien mollis, fringilla turpis ac, congue urna. Aliquam nec placerat dolor. Duis sagittis tempor
-        tellus. Maecenas vel sapien nec metus viverra porta vel ut quam. Cras eu libero vitae nunc ultrices feugiat.
-        Etiam sed odio arcu. Sed tincidunt diam sit amet felis pulvinar, in dapibus leo laoreet. Nam bibendum tellus
-        ante, sit amet dictum erat luctus sit amet. Vivamus rhoncus est sit amet lectus pulvinar, id ornare turpis
-        cursus.
-
-        Maecenas eros augue, consequat sit amet vulputate eget, mollis pharetra neque. Vivamus aliquam metus felis, quis
-        laoreet sem dictum a. Etiam vel ante at nulla pharetra sollicitudin quis vel tellus. Nulla hendrerit viverra leo
-        non facilisis. Integer dictum, arcu sit amet finibus sagittis, mauris nunc posuere massa, ac efficitur tortor
-        sapien non ante. Sed scelerisque dui massa. Proin nec porttitor felis, at semper nibh. Duis varius lorem eget
-        vestibulum sollicitudin. Etiam fermentum consequat erat at congue. Vivamus lacinia a odio in dignissim.
-        Curabitur consectetur sed enim quis tristique.
-
-        Sed non erat at leo imperdiet porta sed et eros. Nam ultricies quam sit amet ligula auctor dignissim. Phasellus
-        blandit fermentum posuere. In sed sollicitudin orci, et consequat odio. Cras semper erat a eros aliquet, non
-        mattis ipsum tincidunt. Proin convallis odio ut ex pulvinar facilisis. Integer vitae blandit sem, quis accumsan
-        lorem. Maecenas ex est, mattis quis justo sed, posuere ultricies lorem.
-
-        Pellentesque eu pharetra erat. Ut in leo egestas, dictum nisl a, facilisis eros. Suspendisse iaculis vulputate
-        elementum. Sed sagittis maximus nulla, id scelerisque massa aliquam hendrerit. Morbi imperdiet sed augue a
-        sagittis. Aliquam erat volutpat. Cras tortor ante, aliquet eget nisi a, euismod hendrerit magna. Fusce
-        sollicitudin et ante vitae ornare. Pellentesque condimentum turpis ac enim vestibulum cursus.
-
-        Sed cursus ipsum ac mauris efficitur sodales. Praesent quis purus velit. Cras euismod lobortis sapien nec
-        eleifend. Mauris dolor tellus, convallis in pharetra et, consequat at eros. Duis dignissim condimentum dictum.
-        Ut finibus, libero vel sollicitudin fringilla, quam urna imperdiet enim, et tincidunt mi ipsum sit amet lorem.
-        Fusce molestie augue vel ullamcorper scelerisque. Proin ultrices tempus ex, vel ornare lorem facilisis a. Proin
-        pretium tristique dolor, eget dictum ex molestie nec.
-
-        Curabitur tincidunt diam non lorem fringilla convallis. Nulla iaculis eget magna id tristique. Nulla tempus,
-        turpis ac scelerisque rutrum, lectus nibh ultricies tortor, lobortis porttitor nibh lacus vulputate ligula.
-        Nulla facilisi. Sed sed nibh in elit maximus lobortis iaculis nec magna. Aenean mollis hendrerit finibus.
-        Vestibulum condimentum id metus ut hendrerit. Aenean sit amet nunc diam. Proin fringilla sagittis ullamcorper.
-        Etiam congue finibus imperdiet. Quisque suscipit dictum pharetra. Suspendisse quam tellus, pellentesque et nulla
-        sed, semper viverra nisl.
-
-        Donec a nibh non nulla efficitur placerat. Nullam tempor aliquet nisi. Morbi id velit rhoncus, auctor odio non,
-        cursus nunc. Nullam luctus justo id luctus malesuada. Ut eget dui arcu. Integer malesuada mi non viverra
-        sagittis. Ut facilisis ut arcu in egestas. Fusce at dui facilisis, ultrices dui at, lacinia lectus. Phasellus
-        lobortis lectus ac semper condimentum. Nulla facilisi. Vestibulum nibh ipsum, cursus ut gravida eu, condimentum
-        tempus mauris. Integer aliquet quam leo, ac egestas nisi pulvinar ac. Sed ornare, nulla id facilisis fringilla,
-        sapien nunc semper ante, vel ullamcorper magna ipsum eget nisi. Sed vitae magna non eros dictum consectetur.
-
-        Curabitur a viverra enim. Pellentesque nunc lorem, posuere quis dolor eget, cursus semper turpis. Donec
-        porttitor condimentum imperdiet. Vestibulum ornare interdum orci, non interdum dui molestie sit amet. Sed
-        vehicula, mauris at venenatis condimentum, enim felis congue tellus, quis commodo eros lorem ultricies leo.
-        Donec ultricies est dui, a eleifend tellus pretium et. Aenean a urna non risus imperdiet lobortis. Aenean
-        rhoncus nulla nunc, sed tristique mauris sagittis quis. Etiam neque nulla, molestie porta euismod id, vestibulum
-        sed lectus. Ut rutrum finibus rutrum. Maecenas faucibus mi at sapien sodales venenatis. Vestibulum sed sem eu
-        erat maximus accumsan.
-
-        Curabitur dapibus sem sed est fermentum, sit amet bibendum erat mattis. Suspendisse iaculis luctus augue, congue
-        eleifend arcu euismod id. Interdum et malesuada fames ac ante ipsum primis in faucibus. In hac habitasse platea
-        dictumst. Nulla et lectus et diam pharetra hendrerit ut a lectus. Etiam eget magna sapien. Sed placerat ipsum
-        erat, quis imperdiet metus interdum vel. In ipsum turpis, tempor vel diam sit amet, pellentesque posuere metus.
-        Vivamus feugiat imperdiet dolor, nec scelerisque elit tempus sit amet. Sed libero risus, blandit nec malesuada
-        eu, pretium sit amet quam. Quisque quis justo augue. Sed vestibulum ante at turpis suscipit, quis eleifend leo
-        fringilla. Nam at ante in neque iaculis mollis. Vestibulum sagittis, felis a consectetur rutrum, ante lorem
-        tempor ante, non volutpat nisl velit ac velit. Nam hendrerit maximus risus in consequat.
-
-        In tincidunt, tellus dictum lobortis ornare, arcu ante ullamcorper ante, id rutrum purus odio ac massa. Interdum
-        et malesuada fames ac ante ipsum primis in faucibus. In vehicula pharetra mi sed volutpat. Vestibulum vel erat
-        nec ligula eleifend tristique. Donec quis neque nec ex iaculis semper. Aenean sodales eros fringilla ante
-        scelerisque facilisis. Vivamus lobortis posuere porta. </p>
+        <!-- Footer Note -->
+        <footer class="text-center py-4 border-top text-muted">
+            <p class="mb-0">Thank you for visiting my website. Feel free to explore and reach out!</p>
+        </footer>
+    </div>
 {% endblock %}

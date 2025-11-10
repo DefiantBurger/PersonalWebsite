@@ -1,13 +1,11 @@
 import logging
 import os
-import socket
 
 from dotenv import load_dotenv
-from waitress import serve
 from flask import request
+from waitress import serve
 
 from app import create_app
-from werkzeug.middleware.proxy_fix import ProxyFix
 
 load_dotenv()
 
@@ -17,10 +15,6 @@ logging.basicConfig(
 )
 
 app = create_app()
-
-if os.getenv("FLASK_ENV", "").lower() == "production":
-	app.logger.debug("Using ProxyFix")
-	app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 
 
 @app.before_request
@@ -38,5 +32,9 @@ if __name__ == '__main__':
 	# TODO:
 	#  consider https://stackoverflow.com/a/12269934 (nginx asset serving & rate limiting)
 	#  try to add a message while web server is down
+	#  fix wrong ip
 
-	serve(app, host='0.0.0.0', port=5000)
+	if os.getenv("FLASK_ENV", "").lower() == "production":
+		serve(app, host='0.0.0.0', port=5000)
+	else:
+		app.run(port=5000, debug=True)

@@ -3,10 +3,24 @@
 {% block title %}Class Scheduling Utility{% endblock %}
 
 {% block head %}
-    <link rel="stylesheet"  href="/assets/css/scheduler.css">
+    <link rel="stylesheet" href="/assets/css/scheduler.css">
 {% endblock %}
 
 {% block body %}
+    <h1 class="my-4 text-center">Class Scheduling Utility</h1>
+
+    {# Import #}
+    <div class="mb-4 text-center">
+        <label for="file-input" class="form-label">Upload your class schedule json file:</label>
+        <input type="file" id="file-input" class="form-control d-inline-block w-auto me-3">
+        <a class="btn btn-secondary" href="/assets/json/courses_template.json" download="courses_template.json">Download Template File</a>
+    </div>
+
+    <div class="mb-4 text-center">
+        <button id="generate-button" class="btn btn-success m-1">Generate Schedule Visualization</button>
+        <button id="export-button" class="btn btn-primary m-1">Export Current Schedule as JSON</button>
+    </div>
+
     <div id="course-container"></div>
     <div id="line-container"></div>
 

@@ -11,7 +11,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const COURSE_TILE_SIZE = { x: 100, y: 100 };
 const COURSE_TILE_OFFSET = { x: 0, y: 0 };
 let courseData; // Initialized later in main
-function makeDivIntoLine(div, start, end, thickness, color) {
+var ZIndexHierarchy;
+(function (ZIndexHierarchy) {
+    // The values are strings because style.zIndex expects a string
+    ZIndexHierarchy["DEFAULT_COURSE_HOLDER"] = "0";
+    ZIndexHierarchy["LIFTED_COURSE_HOLDER"] = "1";
+    ZIndexHierarchy["PRE_REQ_LINE"] = "2";
+})(ZIndexHierarchy || (ZIndexHierarchy = {}));
+function makeDivIntoLine(div, start, end, thickness, color, opacity) {
     const length = Math.sqrt(Math.pow((start.x - end.x), 2) + Math.pow((start.y - end.y), 2));
     const angle = Math.atan2(end.y - start.y, end.x - start.x) * (180 / Math.PI);
     const center = {
@@ -28,14 +35,8 @@ function makeDivIntoLine(div, start, end, thickness, color) {
     div.style.top = `${center.y}px`;
     div.style.width = `${length}px`;
     div.style.transform = `rotate(${angle}deg)`;
+    div.style.opacity = `${opacity}`;
 }
-var ZIndexHierarchy;
-(function (ZIndexHierarchy) {
-    // The values are strings because style.zIndex expects a string
-    ZIndexHierarchy["DEFAULT_COURSE_HOLDER"] = "0";
-    ZIndexHierarchy["LIFTED_COURSE_HOLDER"] = "1";
-    ZIndexHierarchy["PRE_REQ_LINE"] = "2";
-})(ZIndexHierarchy || (ZIndexHierarchy = {}));
 var Semester;
 (function (Semester) {
     Semester[Semester["PRECOLLEGE"] = -1] = "PRECOLLEGE";
@@ -53,27 +54,52 @@ var Semester;
         switch (str) {
             case "precollege":
                 return Semester.PRECOLLEGE;
-            case "f24":
+            case "f1":
                 return Semester.FALL_24;
-            case "s25":
+            case "s1":
                 return Semester.SPRING_25;
-            case "f25":
+            case "f2":
                 return Semester.FALL_25;
-            case "s26":
+            case "s2":
                 return Semester.SPRING_26;
-            case "f26":
+            case "f3":
                 return Semester.FALL_26;
-            case "s27":
+            case "s3":
                 return Semester.SPRING_27;
-            case "f27":
+            case "f4":
                 return Semester.FALL_27;
-            case "s28":
+            case "s4":
                 return Semester.SPRING_28;
             default:
                 throw new Error("Invalid semester string");
         }
     }
     Semester.fromString = fromString;
+    function toString(semester) {
+        switch (semester) {
+            case Semester.PRECOLLEGE:
+                return "precollege";
+            case Semester.FALL_24:
+                return "f1";
+            case Semester.SPRING_25:
+                return "s1";
+            case Semester.FALL_25:
+                return "f2";
+            case Semester.SPRING_26:
+                return "s2";
+            case Semester.FALL_26:
+                return "f3";
+            case Semester.SPRING_27:
+                return "s3";
+            case Semester.FALL_27:
+                return "f4";
+            case Semester.SPRING_28:
+                return "s4";
+            default:
+                throw new Error("Invalid semester");
+        }
+    }
+    Semester.toString = toString;
 })(Semester || (Semester = {}));
 class Course {
     constructor(name, semester, credits) {
@@ -83,10 +109,11 @@ class Course {
     }
 }
 class CourseHolder {
-    constructor(course, pos, selected) {
+    constructor(course, pos, selected, reqSatisPercent = null) {
         this.course = course;
         this.pos = pos;
         this.selected = selected;
+        this.reqSatisPercent = reqSatisPercent;
         this.div = null;
         this.connectedReqs = [];
     }
@@ -107,14 +134,45 @@ class CourseHolder {
     isSelected() {
         return this.selected;
     }
+    generateRequirementSatisfactionBar() {
+        let reqSatisDivContainer = document.createElement("div");
+        let reqUnsatisDiv = document.createElement("div");
+        reqUnsatisDiv.style.left = "0px";
+        reqUnsatisDiv.style.top = `${COURSE_TILE_SIZE.y - 4 - 4}px`;
+        reqUnsatisDiv.style.width = "100%";
+        reqUnsatisDiv.style.height = "2px";
+        reqUnsatisDiv.style.position = "absolute";
+        if (this.reqSatisPercent !== null) {
+            reqUnsatisDiv.style.backgroundColor = "red";
+        }
+        reqSatisDivContainer.appendChild(reqUnsatisDiv);
+        let reqSatisDiv = document.createElement("div");
+        reqSatisDiv.style.left = "0px";
+        reqSatisDiv.style.top = `${COURSE_TILE_SIZE.y - 4 - 4}px`;
+        reqSatisDiv.style.height = "2px";
+        reqSatisDiv.style.position = "absolute";
+        if (this.reqSatisPercent !== null) {
+            reqSatisDiv.style.backgroundColor = "lime";
+            reqSatisDiv.style.width = `${this.reqSatisPercent}%`;
+        }
+        reqSatisDivContainer.appendChild(reqSatisDiv);
+        return reqSatisDivContainer;
+    }
+    addRequirementSatisfactionBar() {
+        if (this.div === null) {
+            throw new Error("Div not generated");
+        }
+        this.div.appendChild(this.generateRequirementSatisfactionBar());
+    }
     generateDiv() {
         if (this.div !== null) {
             throw new Error("Div already generated");
         }
         this.div = document.createElement("div");
-        // console.log(
-        //   `Generating div for course holder at pos: (${this.pos.x}, ${this.pos.y})`
-        // );
+        if (this.course.semester === Semester.PRECOLLEGE) {
+            this.div.style.display = "none";
+            return this.div; // Do not generate a div for precollege courses
+        }
         this.div.style.left = `${this.pos.x}px`;
         this.div.style.top = `${this.pos.y}px`;
         this.div.style.width = `${COURSE_TILE_SIZE.x - 4}px`;
@@ -222,7 +280,7 @@ class Requirement {
         else {
             courseChoices = ls;
         }
-        return new Requirement(ls, canBeConcurrent);
+        return new Requirement(courseChoices, canBeConcurrent);
     }
 }
 class CoursePreReqs {
@@ -249,12 +307,12 @@ class PreReqHolder {
     }
     generateDiv() {
         let color;
-        if (this.courseHolder.center().x >
-            this.reqCourseHolder.center().x + COURSE_TILE_SIZE.x / 2) {
+        let validReqPos = this.courseHolder.center().x > this.reqCourseHolder.center().x + COURSE_TILE_SIZE.x / 2;
+        let invalidReqPos = this.courseHolder.center().x < this.reqCourseHolder.center().x - COURSE_TILE_SIZE.x / 2;
+        if (validReqPos && !this.req.canBeConcurrent) {
             color = "lime";
         }
-        else if (this.courseHolder.center().x <
-            this.reqCourseHolder.center().x - COURSE_TILE_SIZE.x / 2) {
+        else if (invalidReqPos) {
             color = "red";
         }
         else if (this.req.canBeConcurrent) {
@@ -264,9 +322,21 @@ class PreReqHolder {
             color = "red";
         }
         this.div.style.zIndex = ZIndexHierarchy.PRE_REQ_LINE;
-        makeDivIntoLine(this.div, this.reqCourseHolder.end(), this.courseHolder.start(), this.courseHolder.isSelected() || this.reqCourseHolder.isSelected()
+        let lineStart;
+        let lineEnd;
+        if (this.req.canBeConcurrent) {
+            lineStart = this.reqCourseHolder.center();
+            lineEnd = this.courseHolder.center();
+        }
+        else {
+            lineStart = this.reqCourseHolder.end();
+            lineEnd = this.courseHolder.start();
+        }
+        makeDivIntoLine(this.div, lineStart, lineEnd, this.courseHolder.isSelected() || this.reqCourseHolder.isSelected()
             ? 5
-            : 1, color);
+            : 1, color, this.courseHolder.isSelected() || this.reqCourseHolder.isSelected()
+            ? 1.0
+            : 0.5);
         return this.div;
     }
 }
@@ -278,13 +348,23 @@ function loadCourseData() {
         return response.json();
     });
 }
-function loadCoursesJson() {
+function loadCoursesExampleJson() {
     return __awaiter(this, void 0, void 0, function* () {
-        const response = yield fetch("/assets/json/courses.json");
+        const response = yield fetch("/assets/json/courses_example.json");
         if (!response.ok)
             throw new Error("Fetch failed");
         return response.json();
     });
+}
+function clearAllCourses() {
+    const courseContainer = document.querySelector("#course-container");
+    const lineContainer = document.querySelector("#line-container");
+    if (courseContainer) {
+        courseContainer.innerHTML = "";
+    }
+    if (lineContainer) {
+        lineContainer.innerHTML = "";
+    }
 }
 function generateCourses(courseJson) {
     const courses = {};
@@ -334,6 +414,8 @@ function generatePreReqHolders(courseHolders, preReqs) {
     const preReqHolders = {};
     for (const courseName of Object.keys(preReqs)) {
         const cpr = preReqs[courseName];
+        let expectedReqCount = cpr.requirements.length;
+        let actualReqCount = 0;
         for (const req of cpr.requirements) {
             let bestReqOption = null;
             for (const reqOption of req.courseChoices) {
@@ -343,11 +425,19 @@ function generatePreReqHolders(courseHolders, preReqs) {
             }
             if (bestReqOption == null)
                 continue;
-            if (bestReqOption.course.semester <= Semester.PRECOLLEGE)
+            if (bestReqOption.course.semester <= Semester.PRECOLLEGE) {
+                expectedReqCount -= 1;
                 continue;
+            }
+            actualReqCount += 1;
             if (!(courseName in preReqHolders))
                 preReqHolders[courseName] = [];
             preReqHolders[courseName].push(new PreReqHolder(courseHolders[courseName], courseHolders[bestReqOption.course.name], req));
+        }
+        if (expectedReqCount > 0) {
+            console.log(`Course: ${courseName} - Actual Req Count: ${actualReqCount}, Expected Req Count: ${expectedReqCount}`);
+            courseHolders[courseName].reqSatisPercent = (actualReqCount / expectedReqCount) * 100;
+            courseHolders[courseName].addRequirementSatisfactionBar();
         }
     }
     for (const [, preReqHolder] of Object.entries(preReqHolders)) {
@@ -366,55 +456,130 @@ function updatePreReqHolderConnections(courseHolders, preReqHolders) {
         }
     }
 }
+function initializeSchedule(courseJson) {
+    console.log("Initializing schedule with course data...");
+    // Clear existing courses and lines
+    clearAllCourses();
+    const courses = generateCourses(courseJson);
+    const courseHolders = generateCourseHolders(courses);
+    const preReqs = generatePreReqs(courses);
+    const preReqHolders = generatePreReqHolders(courseHolders, preReqs);
+    updatePreReqHolderConnections(courseHolders, preReqHolders);
+    let offsetX;
+    let offsetY;
+    let isDragging = false;
+    let draggedCourse = null;
+    document.addEventListener("mousedown", (event) => {
+        for (const [, courseHolder] of Object.entries(courseHolders)) {
+            courseHolder.deselect();
+        }
+    });
+    for (const el of Array.from(document.querySelectorAll("#course-container > div"))) {
+        const div = el;
+        div.addEventListener("mousedown", (event) => {
+            for (const [, courseHolder] of Object.entries(courseHolders)) {
+                courseHolder.deselect();
+            }
+            const mouseEvent = event;
+            isDragging = true;
+            offsetX = mouseEvent.clientX - div.offsetLeft;
+            offsetY = mouseEvent.clientY - div.offsetTop;
+            draggedCourse = courseHolders[div.innerText];
+            draggedCourse.lift();
+            event.stopPropagation();
+        });
+    }
+    document.addEventListener("mousemove", (event) => {
+        if (isDragging && draggedCourse !== null) {
+            draggedCourse.moveTo({
+                x: event.clientX - offsetX,
+                y: event.clientY - offsetY,
+            });
+        }
+    });
+    document.addEventListener("mouseup", () => {
+        if (isDragging && draggedCourse !== null) {
+            isDragging = false;
+            draggedCourse.drop();
+            draggedCourse = null;
+        }
+    });
+    console.log("Schedule initialization completed!");
+    return courseHolders;
+}
+function exportSchedule(courseHolders) {
+    // Group courses by semester
+    const semesterMap = {};
+    for (const [courseName, courseHolder] of Object.entries(courseHolders)) {
+        const semesterStr = Semester.toString(courseHolder.course.semester);
+        if (!(semesterStr in semesterMap)) {
+            semesterMap[semesterStr] = [];
+        }
+        semesterMap[semesterStr].push(courseName);
+    }
+    // Create the output JSON structure
+    const outputJson = {
+        semesters: semesterMap
+    };
+    // Convert to JSON string with nice formatting
+    const jsonString = JSON.stringify(outputJson, null, "\t");
+    // Create a blob and download it
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `schedule_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    console.log("Schedule exported successfully!");
+}
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("Starting JS initialization...");
         courseData = yield loadCourseData();
-        const courses = generateCourses(yield loadCoursesJson());
-        const courseHolders = generateCourseHolders(courses);
-        const preReqs = generatePreReqs(courses);
-        const preReqHolders = generatePreReqHolders(courseHolders, preReqs);
-        updatePreReqHolderConnections(courseHolders, preReqHolders);
-        let offsetX;
-        let offsetY;
-        let isDragging = false;
-        let draggedCourse = null;
-        document.addEventListener("mousedown", (event) => {
-            for (const [, courseHolder] of Object.entries(courseHolders)) {
-                courseHolder.deselect();
+        // Load and initialize with default example courses
+        const defaultCourseJson = yield loadCoursesExampleJson();
+        let currentCourseHolders = initializeSchedule(defaultCourseJson);
+        // Set up file upload and generate button
+        const fileInput = document.getElementById("file-input");
+        const generateButton = document.getElementById("generate-button");
+        const exportButton = document.getElementById("export-button");
+        generateButton.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const file = (_a = fileInput.files) === null || _a === void 0 ? void 0 : _a[0];
+            if (!file) {
+                alert("Please select a JSON file first!");
+                return;
             }
-        });
-        for (const el of Array.from(document.querySelectorAll("#course-container > div"))) {
-            const div = el;
-            div.addEventListener("mousedown", (event) => {
-                for (const [, courseHolder] of Object.entries(courseHolders)) {
-                    courseHolder.deselect();
+            try {
+                const fileContent = yield file.text();
+                const courseJson = JSON.parse(fileContent);
+                // Validate the JSON structure
+                if (!courseJson.semesters || typeof courseJson.semesters !== "object") {
+                    alert("Invalid JSON format! Expected a 'semesters' object.");
+                    return;
                 }
-                const mouseEvent = event;
-                isDragging = true;
-                offsetX = mouseEvent.clientX - div.offsetLeft;
-                offsetY = mouseEvent.clientY - div.offsetTop;
-                draggedCourse = courseHolders[div.innerText];
-                draggedCourse.lift();
-                event.stopPropagation();
-            });
-        }
-        document.addEventListener("mousemove", (event) => {
-            if (isDragging && draggedCourse !== null) {
-                draggedCourse.moveTo({
-                    x: event.clientX - offsetX,
-                    y: event.clientY - offsetY,
-                });
+                currentCourseHolders = initializeSchedule(courseJson);
+                console.log("Schedule regenerated from uploaded file!");
             }
-        });
-        document.addEventListener("mouseup", () => {
-            if (isDragging && draggedCourse !== null) {
-                isDragging = false;
-                draggedCourse.drop();
-                draggedCourse = null;
+            catch (error) {
+                console.error("Error loading file:", error);
+                alert("Error loading or parsing the JSON file. Please check the file format.");
             }
+        }));
+        exportButton.addEventListener("click", () => {
+            if (Object.keys(currentCourseHolders).length === 0) {
+                alert("No schedule to export! Please generate a schedule first.");
+                return;
+            }
+            exportSchedule(currentCourseHolders);
         });
         console.log("Completed JS initialization!");
     });
 }
-main();
+main().then(_ => {
+}).catch(err => {
+    console.error("Error during main execution:", err);
+});

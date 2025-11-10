@@ -1,0 +1,21 @@
+{
+	"semesters": {
+		"precollege": [
+			"MATH 221",
+			"E C E 210"
+		],
+		"f1": [
+			"MATH 222",
+			"CHEM 103",
+			"COMP SCI 220"
+		],
+		"s1": [
+			"MATH 234",
+			"COMP SCI 300"
+		],
+		"f2": [
+			"E C E 270",
+			"E C E 230"
+		]
+	}
+}

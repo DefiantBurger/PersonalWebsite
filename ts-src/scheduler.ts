@@ -30,10 +30,17 @@ type PreReqHolderMap = {
     [courseName: string]: PreReqHolder[]
 }
 
-const COURSE_TILE_SIZE = { x: 100, y: 100 };
-const COURSE_TILE_OFFSET = { x: 0, y: 0 };
+const COURSE_TILE_SIZE = {x: 100, y: 100};
+const COURSE_TILE_OFFSET = {x: 0, y: 0};
 
 let courseData: CourseDataType; // Initialized later in main
+
+enum ZIndexHierarchy {
+    // The values are strings because style.zIndex expects a string
+    DEFAULT_COURSE_HOLDER = "0",
+    LIFTED_COURSE_HOLDER = "1",
+    PRE_REQ_LINE = "2",
+}
 
 function makeDivIntoLine(
     div: HTMLDivElement,
@@ -41,6 +48,7 @@ function makeDivIntoLine(
     end: Vec2,
     thickness: number,
     color: string,
+    opacity: number,
 ): void {
     const length = Math.sqrt((start.x - end.x) ** 2 + (start.y - end.y) ** 2);
     const angle = Math.atan2(end.y - start.y, end.x - start.x) * (180 / Math.PI);
@@ -60,13 +68,7 @@ function makeDivIntoLine(
     div.style.top = `${center.y}px`;
     div.style.width = `${length}px`;
     div.style.transform = `rotate(${angle}deg)`;
-}
-
-enum ZIndexHierarchy {
-    // The values are strings because style.zIndex expects a string
-    DEFAULT_COURSE_HOLDER = "0",
-    LIFTED_COURSE_HOLDER = "1",
-    PRE_REQ_LINE = "2",
+    div.style.opacity = `${opacity}`;
 }
 
 enum Semester {
@@ -86,24 +88,49 @@ namespace Semester {
         switch (str) {
             case "precollege":
                 return Semester.PRECOLLEGE;
-            case "f24":
+            case "f1":
                 return Semester.FALL_24;
-            case "s25":
+            case "s1":
                 return Semester.SPRING_25;
-            case "f25":
+            case "f2":
                 return Semester.FALL_25;
-            case "s26":
+            case "s2":
                 return Semester.SPRING_26;
-            case "f26":
+            case "f3":
                 return Semester.FALL_26;
-            case "s27":
+            case "s3":
                 return Semester.SPRING_27;
-            case "f27":
+            case "f4":
                 return Semester.FALL_27;
-            case "s28":
+            case "s4":
                 return Semester.SPRING_28;
             default:
                 throw new Error("Invalid semester string");
+        }
+    }
+
+    export function toString(semester: Semester): string {
+        switch (semester) {
+            case Semester.PRECOLLEGE:
+                return "precollege";
+            case Semester.FALL_24:
+                return "f1";
+            case Semester.SPRING_25:
+                return "s1";
+            case Semester.FALL_25:
+                return "f2";
+            case Semester.SPRING_26:
+                return "s2";
+            case Semester.FALL_26:
+                return "f3";
+            case Semester.SPRING_27:
+                return "s3";
+            case Semester.FALL_27:
+                return "f4";
+            case Semester.SPRING_28:
+                return "s4";
+            default:
+                throw new Error("Invalid semester");
         }
     }
 }
@@ -112,6 +139,7 @@ class Course {
     readonly name: string;
     readonly semester: Semester;
     readonly credits: number;
+
     constructor(
         name: string,
         semester: string,
@@ -131,7 +159,9 @@ class CourseHolder {
         readonly course: Course,
         private pos: Vec2,
         private selected: boolean,
-    ) { }
+        public reqSatisPercent: number | null = null,
+    ) {
+    }
 
     addConnectedReq(req: PreReqHolder) {
         this.connectedReqs.push(req);
@@ -148,11 +178,46 @@ class CourseHolder {
     }
 
     getPos(): Vec2 {
-        return { ...this.pos }; // Return a copy
+        return {...this.pos}; // Return a copy
     }
 
     isSelected(): boolean {
         return this.selected;
+    }
+
+    generateRequirementSatisfactionBar(): HTMLDivElement {
+        let reqSatisDivContainer = document.createElement("div");
+
+        let reqUnsatisDiv = document.createElement("div");
+        reqUnsatisDiv.style.left = "0px";
+        reqUnsatisDiv.style.top = `${COURSE_TILE_SIZE.y - 4 - 4}px`;
+        reqUnsatisDiv.style.width = "100%";
+        reqUnsatisDiv.style.height = "2px";
+        reqUnsatisDiv.style.position = "absolute";
+        if (this.reqSatisPercent !== null) {
+            reqUnsatisDiv.style.backgroundColor = "red";
+        }
+        reqSatisDivContainer.appendChild(reqUnsatisDiv);
+
+        let reqSatisDiv = document.createElement("div");
+        reqSatisDiv.style.left = "0px";
+        reqSatisDiv.style.top = `${COURSE_TILE_SIZE.y - 4 - 4}px`;
+        reqSatisDiv.style.height = "2px";
+        reqSatisDiv.style.position = "absolute";
+        if (this.reqSatisPercent !== null) {
+            reqSatisDiv.style.backgroundColor = "lime";
+            reqSatisDiv.style.width = `${this.reqSatisPercent}%`;
+        }
+        reqSatisDivContainer.appendChild(reqSatisDiv);
+
+        return reqSatisDivContainer;
+    }
+
+    addRequirementSatisfactionBar(): void {
+        if (this.div === null) {
+            throw new Error("Div not generated");
+        }
+        this.div.appendChild(this.generateRequirementSatisfactionBar())
     }
 
     generateDiv(): HTMLDivElement {
@@ -160,9 +225,12 @@ class CourseHolder {
             throw new Error("Div already generated");
         }
         this.div = document.createElement("div");
-        // console.log(
-        //   `Generating div for course holder at pos: (${this.pos.x}, ${this.pos.y})`
-        // );
+
+        if (this.course.semester === Semester.PRECOLLEGE) {
+            this.div.style.display = "none";
+            return this.div; // Do not generate a div for precollege courses
+        }
+
         this.div.style.left = `${this.pos.x}px`;
         this.div.style.top = `${this.pos.y}px`;
         this.div.style.width = `${COURSE_TILE_SIZE.x - 4}px`;
@@ -171,6 +239,7 @@ class CourseHolder {
         this.div.style.margin = "2px";
         this.div.style.zIndex = ZIndexHierarchy.DEFAULT_COURSE_HOLDER;
         this.div.innerHTML = this.course.name;
+
         return this.div;
     }
 
@@ -232,7 +301,7 @@ class CourseHolder {
 
     moveTo(pos: Vec2): void {
         // console.log(`Moving to pos: (${pos.x}, ${pos.y})`);
-        this.pos = { ...pos }; // Set a copy
+        this.pos = {...pos}; // Set a copy
         if (this.div === null) {
             throw new Error("Div not generated");
         }
@@ -273,7 +342,8 @@ class Requirement {
     constructor(
         readonly courseChoices: string[],
         readonly canBeConcurrent = false,
-    ) { }
+    ) {
+    }
 
     static fromList(ls: string[], allCanBeConcurrent = false) {
         let courseChoices: string[] = [];
@@ -285,12 +355,13 @@ class Requirement {
         } else {
             courseChoices = ls;
         }
-        return new Requirement(ls, canBeConcurrent);
+        return new Requirement(courseChoices, canBeConcurrent);
     }
 }
 
 class CoursePreReqs {
-    constructor(readonly requirements: Requirement[]) { }
+    constructor(readonly requirements: Requirement[]) {
+    }
 
     static fromCourseName(courseName: string) {
         const requirements: Requirement[] = [];
@@ -311,19 +382,16 @@ class PreReqHolder {
         readonly courseHolder: CourseHolder,
         readonly reqCourseHolder: CourseHolder,
         readonly req: Requirement,
-    ) { }
+    ) {
+    }
 
     generateDiv(): HTMLDivElement {
         let color: string;
-        if (
-            this.courseHolder.center().x >
-            this.reqCourseHolder.center().x + COURSE_TILE_SIZE.x / 2
-        ) {
+        let validReqPos = this.courseHolder.center().x > this.reqCourseHolder.center().x + COURSE_TILE_SIZE.x / 2
+        let invalidReqPos = this.courseHolder.center().x < this.reqCourseHolder.center().x - COURSE_TILE_SIZE.x / 2
+        if (validReqPos && !this.req.canBeConcurrent) {
             color = "lime";
-        } else if (
-            this.courseHolder.center().x <
-            this.reqCourseHolder.center().x - COURSE_TILE_SIZE.x / 2
-        ) {
+        } else if (invalidReqPos) {
             color = "red";
         } else if (this.req.canBeConcurrent) {
             color = "cyan";
@@ -333,14 +401,27 @@ class PreReqHolder {
 
         this.div.style.zIndex = ZIndexHierarchy.PRE_REQ_LINE;
 
+        let lineStart: Vec2;
+        let lineEnd: Vec2;
+        if (this.req.canBeConcurrent) {
+            lineStart = this.reqCourseHolder.center()
+            lineEnd = this.courseHolder.center()
+        } else {
+            lineStart = this.reqCourseHolder.end()
+            lineEnd = this.courseHolder.start()
+        }
+
         makeDivIntoLine(
             this.div,
-            this.reqCourseHolder.end(),
-            this.courseHolder.start(),
+            lineStart,
+            lineEnd,
             this.courseHolder.isSelected() || this.reqCourseHolder.isSelected()
                 ? 5
                 : 1,
             color,
+            this.courseHolder.isSelected() || this.reqCourseHolder.isSelected()
+                ? 1.0
+                : 0.5,
         );
 
         return this.div;
@@ -353,11 +434,22 @@ async function loadCourseData() {
     return response.json();
 }
 
-async function loadCoursesJson() {
-    const response = await fetch("/assets/json/courses.json");
+async function loadCoursesExampleJson() {
+    const response = await fetch("/assets/json/courses_example.json");
     if (!response.ok) throw new Error("Fetch failed");
     return response.json();
+}
 
+function clearAllCourses() {
+    const courseContainer = document.querySelector("#course-container");
+    const lineContainer = document.querySelector("#line-container");
+
+    if (courseContainer) {
+        courseContainer.innerHTML = "";
+    }
+    if (lineContainer) {
+        lineContainer.innerHTML = "";
+    }
 }
 
 function generateCourses(courseJson: { semesters: { [x: string]: string[]; }; }) {
@@ -394,7 +486,7 @@ function generateCourseHolders(courses: CourseMap) {
                 x: course.semester * COURSE_TILE_SIZE.x + COURSE_TILE_OFFSET.x,
                 y: semesterCounts[course.semester]! * COURSE_TILE_SIZE.y + COURSE_TILE_OFFSET.y,
             },
-            false,
+            false
         );
 
         semesterCounts[course.semester]! += 1;
@@ -423,6 +515,9 @@ function generatePreReqHolders(courseHolders: CourseHolderMap, preReqs: PreReqMa
 
     for (const courseName of Object.keys(preReqs)) {
         const cpr = preReqs[courseName];
+        let expectedReqCount = cpr.requirements.length;
+        let actualReqCount = 0;
+
         for (const req of cpr.requirements) {
             let bestReqOption: CourseHolder | null = null;
             for (const reqOption of req.courseChoices) {
@@ -436,8 +531,11 @@ function generatePreReqHolders(courseHolders: CourseHolderMap, preReqs: PreReqMa
             if (bestReqOption == null)
                 continue;
 
-            if (bestReqOption.course.semester <= Semester.PRECOLLEGE)
+            if (bestReqOption.course.semester <= Semester.PRECOLLEGE) {
+                expectedReqCount -= 1;
                 continue;
+            }
+            actualReqCount += 1;
 
             if (!(courseName in preReqHolders))
                 preReqHolders[courseName] = []
@@ -446,6 +544,12 @@ function generatePreReqHolders(courseHolders: CourseHolderMap, preReqs: PreReqMa
                 courseHolders[bestReqOption.course.name],
                 req
             ))
+        }
+
+        if (expectedReqCount > 0) {
+            console.log(`Course: ${courseName} - Actual Req Count: ${actualReqCount}, Expected Req Count: ${expectedReqCount}`);
+            courseHolders[courseName].reqSatisPercent = (actualReqCount / expectedReqCount) * 100;
+            courseHolders[courseName].addRequirementSatisfactionBar();
         }
     }
 
@@ -459,10 +563,7 @@ function generatePreReqHolders(courseHolders: CourseHolderMap, preReqs: PreReqMa
     return preReqHolders;
 }
 
-function updatePreReqHolderConnections(
-    courseHolders: CourseHolderMap,
-    preReqHolders: PreReqHolderMap
-) {
+function updatePreReqHolderConnections(courseHolders: CourseHolderMap, preReqHolders: PreReqHolderMap) {
     for (const [courseName, reqs] of Object.entries(preReqHolders)) {
         for (const req of reqs) {
             courseHolders[courseName].addConnectedReq(req);
@@ -471,12 +572,13 @@ function updatePreReqHolderConnections(
     }
 }
 
+function initializeSchedule(courseJson: any): CourseHolderMap {
+    console.log("Initializing schedule with course data...");
 
-async function main() {
-    console.log("Starting JS initialization...")
-    courseData = await loadCourseData();
+    // Clear existing courses and lines
+    clearAllCourses();
 
-    const courses = generateCourses(await loadCoursesJson());
+    const courses = generateCourses(courseJson);
     const courseHolders = generateCourseHolders(courses);
     const preReqs = generatePreReqs(courses);
     const preReqHolders = generatePreReqHolders(courseHolders, preReqs);
@@ -529,7 +631,98 @@ async function main() {
         }
     });
 
+    console.log("Schedule initialization completed!");
+    return courseHolders;
+}
+
+function exportSchedule(courseHolders: CourseHolderMap) {
+
+    // Group courses by semester
+    const semesterMap: { [semester: string]: string[] } = {};
+
+    for (const [courseName, courseHolder] of Object.entries(courseHolders)) {
+        const semesterStr = Semester.toString(courseHolder.course.semester);
+
+        if (!(semesterStr in semesterMap)) {
+            semesterMap[semesterStr] = [];
+        }
+
+        semesterMap[semesterStr].push(courseName);
+    }
+
+    // Create the output JSON structure
+    const outputJson = {
+        semesters: semesterMap
+    };
+
+    // Convert to JSON string with nice formatting
+    const jsonString = JSON.stringify(outputJson, null, "\t");
+
+    // Create a blob and download it
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `schedule_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    console.log("Schedule exported successfully!");
+}
+
+async function main() {
+    console.log("Starting JS initialization...")
+    courseData = await loadCourseData();
+
+    // Load and initialize with default example courses
+    const defaultCourseJson = await loadCoursesExampleJson();
+    let currentCourseHolders = initializeSchedule(defaultCourseJson);
+
+    // Set up file upload and generate button
+    const fileInput = document.getElementById("file-input") as HTMLInputElement;
+    const generateButton = document.getElementById("generate-button") as HTMLButtonElement;
+    const exportButton = document.getElementById("export-button") as HTMLButtonElement;
+
+    generateButton.addEventListener("click", async () => {
+        const file = fileInput.files?.[0];
+
+        if (!file) {
+            alert("Please select a JSON file first!");
+            return;
+        }
+
+        try {
+            const fileContent = await file.text();
+            const courseJson = JSON.parse(fileContent);
+
+            // Validate the JSON structure
+            if (!courseJson.semesters || typeof courseJson.semesters !== "object") {
+                alert("Invalid JSON format! Expected a 'semesters' object.");
+                return;
+            }
+
+            currentCourseHolders = initializeSchedule(courseJson);
+            console.log("Schedule regenerated from uploaded file!");
+        } catch (error) {
+            console.error("Error loading file:", error);
+            alert("Error loading or parsing the JSON file. Please check the file format.");
+        }
+    });
+
+    exportButton.addEventListener("click", () => {
+        if (Object.keys(currentCourseHolders).length === 0) {
+            alert("No schedule to export! Please generate a schedule first.");
+            return;
+        }
+        exportSchedule(currentCourseHolders);
+    });
+
     console.log("Completed JS initialization!")
 }
 
-main();
+main().then(_ => {
+}).catch(err => {
+    console.error("Error during main execution:", err);
+});

@@ -1,5 +1,3 @@
-{% from "macros/nav_macros.html" import nav_link, nav_drop_header, nav_drop_link with context %}
-
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
 <head>
@@ -8,61 +6,25 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <title>{% block title %}{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/8bf0615b48.js" crossorigin="anonymous"></script>
+    {#    <script src="https://kit.fontawesome.com/8bf0615b48.js" crossorigin="anonymous"></script>#}
+    <link href='https://cdn.boxicons.com/3.0.3/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <link href='https://cdn.boxicons.com/3.0.3/fonts/brands/boxicons-brands.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="/assets/css/root.css">
     {% block head %}{% endblock %}
 </head>
 <body>
-<nav class="navbar navbar-expand-lg fixed-top bg-body-tertiary shadow-sm">
-    <div class="container-fluid">
-        <a class="navbar-brand fs-2 fw-bold" href="/">
-            <i class="fa-solid fa-hexagon-nodes"></i>
-            Joseph Cicalese
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLinks"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse fs-5" id="navbarLinks">
-            <ul class="navbar-nav">
-                {{ nav_link('/', 'Home') }}
-                {{ nav_link('/about-me/', 'About Me') }}
-                <li class="nav-item dropdown">
-                    {{ nav_drop_header('/projects/', 'Projects') }}
-                    <ul class="dropdown-menu">
-                        {{ nav_drop_link('/projects/mlmp/', 'Main Line Math Project') }}
-                        {{ nav_drop_link('/projects/jball/', 'J-Ball Basketball') }}
-                        {{ nav_drop_link('/projects/latin/', 'Latin Translator') }}
-                        {{ nav_drop_link('/projects/', 'See more...') }}
-                    </ul>
-                </li>
-                <li class="nav-item dropdown">
-                    {{ nav_drop_header('/utilities/', 'Utilities') }}
-                    <ul class="dropdown-menu">
-                        {{ nav_drop_link('/utilities/share/', 'File & Text Sharing') }}
-                        {{ nav_drop_link('/utilities/scheduler/', 'Class Scheduling Utility') }}
-                        {{ nav_drop_link('/utilities/nutrislice/', 'Nutrislice Tracker') }}
-                        {{ nav_drop_link('/utilities/insomnia/', 'Insomnia Deal Tracker') }}
-                        {{ nav_drop_link('/utilities/', 'See more...') }}
-                    </ul>
-                </li>
-            </ul>
-            <ul class="navbar-nav ms-auto">
-                {{ nav_link('/contact/', 'Contact', 'bg-body-secondary fw-semibold contact-nav-item', 'px-4') }}
-                {{ nav_link('/login/', 'Login', 'bg-primary-subtle fw-semibold ms-2', 'px-4') }}
-            </ul>
-        </div>
-    </div>
-</nav>
+{#<div class="position-fixed" style="top:1rem; right:1rem; z-index:1050;">#}
+{#    <button class="btn top-50 start-50" type="button">#}
+{#        <i class="bxl bx-linkedin d-flex align-items-center justify-content-center p-0"></i>#}
+{#    </button>#}
+{#</div>#}
+
 <div class="container">
     {% block body %}{% endblock %}
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
-        crossorigin="anonymous"></script>
 <script src="/assets/js/root.js"></script>
 </body>
 </html>
