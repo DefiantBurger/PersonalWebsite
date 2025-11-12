@@ -262,6 +262,7 @@ class CourseHolder {
             x: xIndex * COURSE_TILE_SIZE.x + COURSE_TILE_OFFSET.x,
             y: yIndex * COURSE_TILE_SIZE.y + COURSE_TILE_OFFSET.y,
         });
+        this.course.semester = xIndex;
     }
 }
 class Requirement {

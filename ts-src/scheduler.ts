@@ -137,7 +137,7 @@ namespace Semester {
 
 class Course {
     readonly name: string;
-    readonly semester: Semester;
+    semester: Semester;
     readonly credits: number;
 
     constructor(
@@ -335,6 +335,8 @@ class CourseHolder {
             y:
                 yIndex * COURSE_TILE_SIZE.y + COURSE_TILE_OFFSET.y,
         });
+
+        this.course.semester = xIndex;
     }
 }
 
