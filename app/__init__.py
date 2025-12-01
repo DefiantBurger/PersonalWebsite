@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.middleware.proxy_fix import ProxyFix
 from wsgi_cloudflare_proxy_fix import CloudflareProxyFix
 
-import database
+import app.database
 
 db = SQLAlchemy()
 

@@ -1,0 +1,2 @@
+terraform taint google_compute_instance.default
+terraform plan etc.

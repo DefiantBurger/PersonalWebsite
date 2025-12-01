@@ -1,4 +1,3 @@
-import logging
 import os
 
 from dotenv import load_dotenv
@@ -6,7 +5,6 @@ from flask import request
 from waitress import serve
 
 from app import create_app
-from flask import g
 
 load_dotenv()
 
