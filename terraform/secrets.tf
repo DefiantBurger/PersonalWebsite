@@ -27,3 +27,9 @@ data "google_secret_manager_secret_version" "flask-secret" {
 
   secret = "flask-secret"
 }
+
+data "google_secret_manager_secret_version" "mongodb-uri" {
+  provider = google-beta
+
+  secret = "mongodb-uri"
+}

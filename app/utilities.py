@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, abort, redirect, request
 
-from database import get_db
+from . import database
 
 utilities = Blueprint('utilities', __name__)
 
@@ -24,7 +24,7 @@ def scheduler():
 
 @utilities.route('/short/<shortcode>/')
 def get_shortlink(shortcode):
-	db = get_db()
+	db = database.get_db()
 	shortlink = db.get_shortlink(shortcode)
 
 	if shortlink:

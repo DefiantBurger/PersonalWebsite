@@ -33,6 +33,7 @@ locals {
   flaskapp_service = templatefile("${path.module}/flaskapp.service.tftpl", {
     app_path     = var.app_path
     flask_secret = data.google_secret_manager_secret_version.flask-secret.secret_data
+    mongodb_uri = data.google_secret_manager_secret_version.mongodb-uri.secret_data
   })
 }
 
