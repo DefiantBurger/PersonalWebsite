@@ -1,5 +1,3 @@
-import ipaddress
-
 import httpagentparser
 import requests
 from flask import Blueprint, render_template, send_from_directory, redirect, request, current_app

@@ -6,6 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.middleware.proxy_fix import ProxyFix
 from wsgi_cloudflare_proxy_fix import CloudflareProxyFix
 
+import database
+
 db = SQLAlchemy()
 
 
@@ -38,6 +40,8 @@ def create_app():
 	app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 	db.init_app(app)
 
+	database.init_db()
+
 	@app.errorhandler(404)
 	def page_not_found(error):
 		return render_template("base_templates/info_text.html", text=error, link_href="/", link_text="Go Home"), 404
@@ -53,6 +57,6 @@ def create_app():
 		app.register_blueprint(projects, url_prefix='/projects/')
 
 		from .utilities import utilities
-		app.register_blueprint(utilities, url_prefix='/utils/')
+		app.register_blueprint(utilities, url_prefix='/')
 
 	return app

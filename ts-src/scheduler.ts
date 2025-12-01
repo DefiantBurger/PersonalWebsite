@@ -657,6 +657,16 @@ function exportSchedule(courseHolders: CourseHolderMap) {
         semesters: semesterMap
     };
 
+    // sort by semester order
+    const sortedSemesters = Object.keys(outputJson.semesters).sort((a, b) => {
+        return Semester.fromString(a) - Semester.fromString(b);
+    });
+    const sortedSemesterMap: { [semester: string]: string[] } = {};
+    for (const semester of sortedSemesters) {
+        sortedSemesterMap[semester] = outputJson.semesters[semester];
+    }
+    outputJson.semesters = sortedSemesterMap;
+
     // Convert to JSON string with nice formatting
     const jsonString = JSON.stringify(outputJson, null, "\t");
 

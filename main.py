@@ -6,13 +6,14 @@ from flask import request
 from waitress import serve
 
 from app import create_app
+from flask import g
 
 load_dotenv()
 
-logging.basicConfig(
-	level=logging.DEBUG,
-	format='%(asctime)s [%(levelname)s] %(name)s: %(message)s'
-)
+# logging.basicConfig(
+# 	level=logging.DEBUG,
+# 	format='%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+# )
 
 app = create_app()
 
@@ -20,12 +21,6 @@ app = create_app()
 @app.before_request
 def log_request_info():
 	app.logger.info(f'{request.remote_addr} - {request.method} {request.path}')
-
-
-# @app.after_request
-# def log_response_info(response):
-# 	app.logger.info(f'{request.remote_addr} - {request.method} {request.path} - {response.status_code}')
-# 	return response
 
 
 if __name__ == '__main__':
